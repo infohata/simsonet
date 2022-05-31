@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from django.contrib.messages import constants as messages
 import os
 from pathlib import Path
 
@@ -33,7 +34,12 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'simsonet_site',
+    'user_profile',
     
+    'crispy_forms',
+    'tinymce',
+    'debug_toolbar',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -133,3 +140,42 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = '/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'infohata@gmail.com'
+EMAIL_HOST_PASSWORD = 'tikigithubanedekit'
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 300,
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'plugins': '''contextmenu textcolor lists directionality visualchars charmap hr ''',
+    'toolbar1': '''
+            bold italic underline | fontselect fontsizeselect | forecolor backcolor | 
+            alignleft alignright aligncenter alignjustify | indent outdent | bullist numlist |
+            visualblocks visualchars | charmap hr
+            ''',
+    'statusbar': True,
+    'menubar': False,
+    'toolbar2': '',
+}

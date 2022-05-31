@@ -25,7 +25,7 @@ def edit_profile(request):
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            messages.success(request, _('Vartotojo {} duomenys atnaujinti').format(request.user))
+            messages.success(request, _('User {} profile was updated').format(request.user))
             return redirect('view_profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
@@ -48,18 +48,18 @@ def register(request):
         # validuosim forma, tikrindami ar sutampa slaptažodžiai, ar egzistuoja vartotojas
         error = False
         if not password or password != password2:
-            messages.error(request, _('Slaptažodžiai nesutampa arba neįvesti.'))
+            messages.error(request, _('Passwords do not match or not entered.'))
             error = True
         if not username or User.objects.filter(username=username).exists():
-            messages.error(request, _('Vartotojas {} jau egzistuoja arba neįvestas.').format(username))
+            messages.error(request, _('User with username {} already exists.').format(username))
             error = True
         if not email or User.objects.filter(email=email).exists():
-            messages.error(request, _('Vartotojas su el.praštu {} jau egzistuoja arba neįvestas.').format(email))
+            messages.error(request, _('User with e-mail address {} already exists.').format(email))
             error = True
         if error:
             return redirect('register')
         else:
             User.objects.create_user(username=username, email=email, password=password)
-            messages.success(request, _('Vartotojas {} užregistruotas sėkmingai. Galite prisijungti').format(username))
+            messages.success(request, _('User {} has been registered successfully. You can login now.').format(username))
             return redirect('index')
     return render(request, 'user_profile/register.html')

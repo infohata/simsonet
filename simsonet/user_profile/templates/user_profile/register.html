@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container py-3">
         <h1>{% trans 'sign up'|capfirst %}</h1>
-        <form method="post">
+        <form method="post" action="">
             {% csrf_token %}
             <div class="form-group">
                 <label for="username">{% trans 'username'|capfirst %}:</label>
@@ -13,7 +13,7 @@
             <div class="form-group">
                 <label for="exampleInputEmail1">{% trans "e-mail"|capfirst %}:</label>
                 <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value="{{ email }}">
-                <small id="emailHelp" class="form-text text-muted">{% trans '' %} </small>
+                <small id="emailHelp" class="form-text text-muted">{% trans 'to be used for password reset purpose only' %}. </small>
             </div>
             <div class="form-group">
                 <label for="password">{% trans "password"|capfirst %}:</label>
