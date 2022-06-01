@@ -1,0 +1,30 @@
+{% load i18n %}
+<ul class="list-group">
+{% for post in post_list %}
+    <li class="list-group-item">
+        <!-- user widget -->
+        {% with post.owner as user_badge %}
+            {% include 'simsonet_posts/includes/user_widget.html' %}
+        {% endwith %}
+        <!-- timestamps -->
+        <span class="badge badge-secondary ml-2 p-2">{{ post.created_at }}</span>
+        {% if post.created_at != post.updated_at %}
+            <span class="badge badge-primary ml-2 p-2">{% trans 'edited' %} {{ post.updated_at }}</span>
+        {% endif %}
+        <!-- if user has replies or is a reply to another post but page does not provide a wall ID -->
+        {% if post.reply_to and not wall %}
+            <a class="badge badge-light ml-2 p-2">{% trans "reply to" %}: {{ post.reply_to }}</a>
+        {% endif %}
+        {% if post.replies.count > 0 and not wall %}
+            <a class="badge badge-light ml-2 p-2">{% trans "replies" %}: {{ post.replies.count }}</a>
+        {% endif %}
+        {{ post.content|safe }}
+        <!-- if page provides a wall ID, we print all posts and replies to them recursively -->
+        {% if wall and post.replies.count > 0 %}
+            {% with post.replies.all as post_list %}
+                {% include 'simsonet_posts/includes/post_list.html' %}
+            {% endwith %}
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>

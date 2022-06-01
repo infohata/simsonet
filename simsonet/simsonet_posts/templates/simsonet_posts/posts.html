@@ -16,8 +16,10 @@
     {% endif %}
     {% trans 'posts'|capfirst %}
     </h1>
-    {{ post_list }}<br>
-    wall: {{ wall }}<br>
-    owner: {{ owner }}<br>
+    {% if post_list.count > 0 %}
+        {% include 'simsonet_posts/includes/post_list.html' %}
+    {% else %}
+        <div class="alert alert-secondary">{% trans "no posts found"|capfirst %}.</div>
+    {% endif %}
 </div>
 {% endblock content %}
