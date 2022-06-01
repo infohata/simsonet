@@ -2,6 +2,20 @@
 {% load static i18n %}
 {% block content %}
 <div class="container">
+    <h1 class="ssn-posts-heading">
+    {% if wall %}
+        {% with wall.owner as user_badge %}
+            {% include 'simsonet_posts/includes/user_widget.html' %}
+        {% endwith %}
+    {{ wall.name }}
+    {% else %}
+        {% with owner as user_badge %}
+            {% include 'simsonet_posts/includes/user_widget.html' %}
+        {% endwith %}
+        {% trans 'all'|capfirst %}
+    {% endif %}
+    {% trans 'posts'|capfirst %}
+    </h1>
     {{ post_list }}<br>
     wall: {{ wall }}<br>
     owner: {{ owner }}<br>

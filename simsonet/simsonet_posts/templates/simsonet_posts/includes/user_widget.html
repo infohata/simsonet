@@ -1,0 +1,13 @@
+{% load static %}
+<a class="btn btn-outline-secondary" href="{% url 'view_user_profile' user_badge.id %}">
+    {% if user_badge.user_profile.picture %}
+    <img class="img rounded-circle user-badge" src="{{ user_badge.user_profile.picture.url }}">
+    {% else %}
+    <img class="rounded-circle user-badge" src="{% static 'user_profile/img/default.png' %}">
+    {% endif %}
+    {% if user_badge.first_name or user_badge.last_name %}
+        {{ user_badge.first_name }} {{ user_badge.last_name }}
+    {% else %}
+        {{ user_badge.username }}
+    {% endif %}
+</a>

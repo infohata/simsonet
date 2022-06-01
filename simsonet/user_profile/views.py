@@ -9,12 +9,12 @@ from . forms import UserUpdateForm, UserProfileUpdateForm
 
 @login_required
 def view_my_profile(request):
-    return render(request, 'user_profile/view_profile.html')
+    return render(request, 'user_profile/view_profile.html', {'user_': request.user })
 
 
 def view_user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    return render(request, 'user_profile/view_profile.html', {'user': user})
+    return render(request, 'user_profile/view_profile.html', {'user_': user })
 
 
 @login_required

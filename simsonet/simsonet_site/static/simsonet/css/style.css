@@ -1,1 +1,2 @@
 body { background-color: #ccc; }
+img.user-badge { max-width: 28px; max-height: 28px; vertical-align: middle; }
