@@ -11,7 +11,7 @@ class Wall(models.Model):
         related_name='walls',
         verbose_name=_('owner'),
     )
-    name = models.CharField(_('name'), max_length=255)
+    name = models.CharField(_('name'), max_length=255, default=_('Personal'), db_index=True)
     pin_to_top = models.BooleanField(_('pin to top'), default=False)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True, db_index=True)
 
@@ -22,6 +22,7 @@ class Wall(models.Model):
         verbose_name = _('wall')
         verbose_name_plural = _('walls')
         ordering = ('pin_to_top', 'created_at', )
+        unique_together = ('owner', 'name', )
 
 
 class Post(models.Model):
@@ -31,7 +32,7 @@ class Post(models.Model):
         related_name='posts',
         verbose_name=_('owner'),
     )
-    content = HTMLField(_('content')),
+    content = HTMLField(_('content'))
     wall = models.ForeignKey(
         Wall, 
         verbose_name=_("wall"), 

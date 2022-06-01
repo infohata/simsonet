@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
+    path('tinymce/', include('tinymce.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
     path('user_profile/', include('user_profile.urls')),
     path('', include('simsonet_site.urls')),
