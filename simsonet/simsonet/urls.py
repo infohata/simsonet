@@ -25,5 +25,6 @@ urlpatterns = [
     path('__debug__/', include('debug_toolbar.urls')),
     path('user_profile/', include('user_profile.urls')),
     path('', include('simsonet_site.urls')),
+    path('posts/', include('simsonet_posts.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
