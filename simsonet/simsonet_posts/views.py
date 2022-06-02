@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, get_user
 from django.shortcuts import get_object_or_404
 from django.views import generic
-from django.urls import reverse_lazy
+from . forms import PostForm
 from . models import Post, Wall
 
 
@@ -48,7 +48,8 @@ class PostDetailView(generic.DetailView):
 class PostCreateView(generic.CreateView):
     model = Post
     template_name = 'simsonet_posts/post_create.html'
-    fields = ('content', 'owner', 'wall', 'reply_to', 'repost_of', )
+    # fields = ('content', 'owner', 'wall', 'reply_to', 'repost_of', )
+    form_class = PostForm
 
     def get_initial(self):
         initial = super().get_initial()

@@ -16,6 +16,12 @@
                     <p class="text-secondary">{{ user_.email }}</p>
                     <a href="{% url 'edit_profile' %}">{% trans "update" %}</a><hr>
                 {% endif %}
+                <h3>{% trans "walls"|capfirst %}</h3>
+                <div class="list-group">
+                    {% for wall in user_.walls.all %}
+                        <a class="list-group-item" href="{% url 'post_list' %}?wall_id={{ wall.id }}">{{ wall.name }}</a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
