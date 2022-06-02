@@ -16,3 +16,4 @@
     <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.id %}">{% trans "replies" %}: {{ post.replies.count }}</a>
 {% endif %}
 {{ post.content|safe }}
+<a class="btn btn-primary" href="{% url 'post_create' %}?reply_to={{ post.id }}">{% trans "reply"|capfirst %}</a>

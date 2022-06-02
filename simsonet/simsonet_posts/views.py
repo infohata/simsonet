@@ -54,8 +54,19 @@ class PostCreateView(generic.CreateView):
         initial = super().get_initial()
         initial['owner'] = self.request.user
         initial['wall'] = self.request.GET.get('wall_id')
+        initial['reply_to'] = self.request.GET.get('reply_to')
         return initial
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        wall_id = self.request.GET.get('wall_id')
+        if wall_id:
+            context["wall"] = get_object_or_404(Wall, id=wall_id)
+        reply_to = self.request.GET.get('reply_to')
+        if reply_to:
+            context["reply_to"] = get_object_or_404(Post, id=reply_to)
+        return context
