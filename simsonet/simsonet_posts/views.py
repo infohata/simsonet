@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model, get_user
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
 from django.views import generic
 from . forms import PostForm
@@ -45,10 +46,9 @@ class PostDetailView(generic.DetailView):
     template_name = 'simsonet_posts/post_detail.html'
 
 
-class PostCreateView(generic.CreateView):
+class PostCreateView(LoginRequiredMixin, generic.CreateView):
     model = Post
     template_name = 'simsonet_posts/post_create.html'
-    # fields = ('content', 'owner', 'wall', 'reply_to', 'repost_of', )
     form_class = PostForm
 
     def get_initial(self):
@@ -77,3 +77,18 @@ class PostCreateView(generic.CreateView):
         if repost_of:
             context["repost_of"] = get_object_or_404(Post, id=repost_of)
         return context
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Post
+    template_name = 'simsonet_posts/post_update.html'
+    form_class = PostForm
+
+    def form_valid(self, form):
+        form.instance.id = self.get_object().id
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post_instance = self.get_object()
+        return post_instance.owner == self.request.user

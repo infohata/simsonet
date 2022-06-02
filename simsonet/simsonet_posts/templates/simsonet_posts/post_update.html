@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static i18n crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <h1>
+        {% if reply_to %}
+            {% trans "edit your reply"|capfirst %}
+        {% elif repost_of %}
+            {% trans "edit your repost"|capfirst %}
+        {% else %}
+            {% trans "edit your post"|capfirst %}
+            {% if wall %}
+                {% trans "on" %}
+                    {% with wall.owner as user_badge %}
+                        {% include 'simsonet_posts/includes/user_widget.html' %}
+                    {% endwith %}
+                {{ wall.name }} {% trans "wall" %}
+            {% endif %}
+        {% endif %}
+    </h1>
+    <form action="{% url 'post_update' object.id %}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-group"><button type="submit" class="btn btn-primary">
+            {% if reply_to %}
+                {% trans "update reply"|capfirst %}
+            {% else %}
+                {% trans "update post"|capfirst %}
+            {% endif %}
+        </button></div>
+    </form>
+    {% if reply_to or repost_of %}
+        <h2>{% trans "original post"|capfirst %}</h2>
+        <ul class="list-group"><li class="list-group-item">
+        {% if reply_to %}
+            {% with reply_to as post %}
+                {% include 'simsonet_posts/includes/post_detail.html' %}
+            {% endwith %}
+        {% elif repost_of %}
+            {% with repost_of as post %}
+                {% include 'simsonet_posts/includes/post_detail.html' %}
+            {% endwith %}
+        {% endif %}
+        </li></ul>
+    {% endif %}
+</div>
+{% endblock content %}
