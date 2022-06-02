@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% block content %}
+<div class="container">
+    {% if object.wall %}
+        <h1 class="ssn-posts-heading">
+            {% with object.wall.owner as user_badge %}
+                {% include 'simsonet_posts/includes/user_widget.html' %}
+            {% endwith %}
+        <a href="{% url 'post_list' %}?wall_id={{ object.wall.id }}">{{ object.wall.name }}</a>
+        {% trans 'posts'|capfirst %}
+        </h1>
+    {% endif %}
+    <ul class="list-group"><li class="list-group-item">
+    {% with object as post %}
+        {% include 'simsonet_posts/includes/post_detail.html' %}
+    {% endwith %}
+    <!--  we print all posts and replies recursively -->
+    {% if post.replies.count > 0 %}
+        {% with post.replies.all as post_list %}
+            {% include 'simsonet_posts/includes/post_list.html' %}
+        {% endwith %}
+    {% endif %}
+    </li></ul>
+</div>
+{% endblock content %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from tinymce.models import HTMLField
 
@@ -63,6 +64,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{str(self.created_at)}, {str(self.owner)}'
+
+    def get_absolute_url(self):
+        return reverse("post_detail", kwargs={"pk": self.pk})
 
     class Meta:
         verbose_name = _('post')

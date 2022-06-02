@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model, get_user
 from django.shortcuts import get_object_or_404
 from django.views import generic
+from django.urls import reverse_lazy
 from . models import Post, Wall
 
 
@@ -12,7 +13,7 @@ class WallDetailView(generic.DetailView):
 class PostListView(generic.ListView):
     model = Post
     paginate_by = 20
-    template_name = 'simsonet_posts/posts.html'
+    template_name = 'simsonet_posts/post_list.html'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -22,7 +23,7 @@ class PostListView(generic.ListView):
         owner_id = self.request.GET.get('owner_id')
         if owner_id:
             queryset = queryset.filter(owner=owner_id)
-        else:
+        elif not wall_id:
             queryset = queryset.filter(owner=get_user(self.request))
         return queryset
 
@@ -37,3 +38,24 @@ class PostListView(generic.ListView):
         else:
             context['owner'] = get_user(self.request)
         return context
+
+
+class PostDetailView(generic.DetailView):
+    model = Post
+    template_name = 'simsonet_posts/post_detail.html'
+
+
+class PostCreateView(generic.CreateView):
+    model = Post
+    template_name = 'simsonet_posts/post_create.html'
+    fields = ('content', 'owner', 'wall', 'reply_to', 'repost_of', )
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['owner'] = self.request.user
+        initial['wall'] = self.request.GET.get('wall_id')
+        return initial
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)

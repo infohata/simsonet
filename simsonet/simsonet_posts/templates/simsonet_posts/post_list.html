@@ -15,6 +15,7 @@
         {% trans 'all'|capfirst %}
     {% endif %}
     {% trans 'posts'|capfirst %}
+    <a class="btn btn-primary" href="{% url 'post_create' %}?wall_id={{ wall.id }}">{% trans "create a post this wall"|capfirst %}</a>
     </h1>
     {% if post_list.count > 0 %}
         {% include 'simsonet_posts/includes/post_list.html' %}

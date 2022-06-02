@@ -1,0 +1,18 @@
+{% load i18n %}
+<!-- user widget -->
+{% with post.owner as user_badge %}
+    {% include 'simsonet_posts/includes/user_widget.html' %}
+{% endwith %}
+<!-- timestamps -->
+<span class="badge badge-light ml-2 p-2">{{ post.created_at }}</span>
+{% if post.created_at != post.updated_at %}
+    <span class="badge badge-secondary ml-2 p-2">{% trans 'edited' %} {{ post.updated_at }}</span>
+{% endif %}
+<!-- if user has replies or is a reply to another post but page does not provide a wall ID -->
+{% if post.reply_to %}
+    <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.reply_to.id %}">{% trans "reply to" %}: {{ post.reply_to.created_at }} {{ post.reply_to.owner }}</a>
+{% endif %}
+{% if post.replies.count > 0 %}
+    <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.id %}">{% trans "replies" %}: {{ post.replies.count }}</a>
+{% endif %}
+{{ post.content|safe }}
