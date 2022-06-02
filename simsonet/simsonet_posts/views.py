@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.views import generic
 from . forms import PostForm
 from . models import Post, Wall
@@ -92,3 +93,20 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView
     def test_func(self):
         post_instance = self.get_object()
         return post_instance.owner == self.request.user
+
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = Post
+    template_name = 'simsonet_posts/post_delete.html'
+
+    def test_func(self):
+        post_instance = self.get_object()
+        return post_instance.owner == self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('post_list')+'?wall_id='+str(self.request.user.walls.first().id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['delete'] = True
+        return context

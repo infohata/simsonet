@@ -19,9 +19,14 @@
     <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.id %}">{% trans "reposts" %}: {{ post.reposts.count }}</a>
 {% endif %}
 {{ post.content|safe }}
-{% if not reply_to and not repost_of %}
+{% if not reply_to and not repost_of and not delete %}
     <a class="btn btn-primary" href="{% url 'post_create' %}?reply_to={{ post.id }}">{% trans "reply"|capfirst %}</a>
-    <a class="btn btn-primary" href="{% url 'post_create' %}?repost_of={{ post.id }}">{% trans "repost"|capfirst %}</a>
+    {% if post.owner == user %}
+        <a class="btn btn-secondary" href="{% url 'post_update' post.id %}">{% trans "edit"|capfirst %}</a>
+        <a class="btn btn-outline-danger" href="{% url 'post_delete' post.id %}">{% trans "delete"|capfirst %}</a>
+    {% else %}
+        <a class="btn btn-primary" href="{% url 'post_create' %}?repost_of={{ post.id }}">{% trans "repost"|capfirst %}</a>
+    {% endif %}
 {% endif %}
 {% if post.repost_of %}
     <h5 class="text-muted ssn-repost">{% trans "original post"|capfirst %}</h5>
