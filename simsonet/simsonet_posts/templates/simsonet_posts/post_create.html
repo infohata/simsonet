@@ -4,7 +4,9 @@
 <div class="container">
     <h1>
         {% if reply_to %}
-            {% trans "replying to a post"|capfirst %}
+            {% trans "post a reply"|capfirst %}
+        {% elif repost_of %}
+            {% trans "repost"|capfirst %}
         {% else %}
             {% trans "create a post"|capfirst %}
             {% if wall %}
@@ -27,12 +29,18 @@
             {% endif %}
         </button></div>
     </form>
-    {% if reply_to %}
+    {% if reply_to or repost_of %}
         <h2>{% trans "original post"|capfirst %}</h2>
         <ul class="list-group"><li class="list-group-item">
-        {% with reply_to as post %}
-            {% include 'simsonet_posts/includes/post_detail.html' %}
-        {% endwith %}
+        {% if reply_to %}
+            {% with reply_to as post %}
+                {% include 'simsonet_posts/includes/post_detail.html' %}
+            {% endwith %}
+        {% elif repost_of %}
+            {% with repost_of as post %}
+                {% include 'simsonet_posts/includes/post_detail.html' %}
+            {% endwith %}
+        {% endif %}
         </li></ul>
     {% endif %}
 </div>

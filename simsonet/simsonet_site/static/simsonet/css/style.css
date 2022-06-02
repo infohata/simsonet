@@ -1,2 +1,3 @@
 body { background-color: #ccc; }
 img.user-badge { max-width: 28px; max-height: 28px; vertical-align: middle; }
+.ssn-repost { border-top: 3px solid #eee; margin-top: 1rem; }

@@ -15,5 +15,19 @@
 {% if post.replies.count > 0 %}
     <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.id %}">{% trans "replies" %}: {{ post.replies.count }}</a>
 {% endif %}
+{% if post.reposts.count > 0 %}
+    <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.id %}">{% trans "reposts" %}: {{ post.reposts.count }}</a>
+{% endif %}
 {{ post.content|safe }}
-<a class="btn btn-primary" href="{% url 'post_create' %}?reply_to={{ post.id }}">{% trans "reply"|capfirst %}</a>
+{% if not reply_to and not repost_of %}
+    <a class="btn btn-primary" href="{% url 'post_create' %}?reply_to={{ post.id }}">{% trans "reply"|capfirst %}</a>
+    <a class="btn btn-primary" href="{% url 'post_create' %}?repost_of={{ post.id }}">{% trans "repost"|capfirst %}</a>
+{% endif %}
+{% if post.repost_of %}
+    <h5 class="text-muted ssn-repost">{% trans "original post"|capfirst %}</h5>
+    <ul class="list-group"><li class="list-group-item">
+    {% with post.repost_of as post  %}
+        {% include 'simsonet_posts/includes/post_detail.html' %}
+    {% endwith %}
+    </li></ul>
+{% endif %}

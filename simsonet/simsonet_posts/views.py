@@ -55,6 +55,9 @@ class PostCreateView(generic.CreateView):
         initial['owner'] = self.request.user
         initial['wall'] = self.request.GET.get('wall_id')
         initial['reply_to'] = self.request.GET.get('reply_to')
+        initial['repost_of'] = self.request.GET.get('repost_of')
+        if initial['repost_of'] and not initial['wall']:
+            initial['wall'] = self.request.user.walls.first()
         return initial
 
     def form_valid(self, form):
@@ -69,4 +72,7 @@ class PostCreateView(generic.CreateView):
         reply_to = self.request.GET.get('reply_to')
         if reply_to:
             context["reply_to"] = get_object_or_404(Post, id=reply_to)
+        repost_of = self.request.GET.get('repost_of')
+        if repost_of:
+            context["repost_of"] = get_object_or_404(Post, id=repost_of)
         return context

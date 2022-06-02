@@ -47,7 +47,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(_('updated at'), auto_now=True, db_index=True)
     reply_to = models.ForeignKey(
         "Post", 
-        verbose_name=_("reply_to"), 
+        verbose_name=_("reply to"), 
         on_delete=models.SET_NULL,
         related_name='replies',
         null=True,
@@ -55,7 +55,7 @@ class Post(models.Model):
     )
     repost_of = models.ForeignKey(
         "Post", 
-        verbose_name=_("repost_of"), 
+        verbose_name=_("repost of"), 
         on_delete=models.SET_NULL,
         related_name='reposts',
         null=True,
