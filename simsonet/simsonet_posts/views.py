@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from . forms import PostForm
 from . models import Post, Wall
@@ -64,6 +66,7 @@ class PostCreateView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        messages.success(self.request, _('Posted successfully'))
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -88,6 +91,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView
     def form_valid(self, form):
         form.instance.id = self.get_object().id
         form.instance.owner = self.request.user
+        messages.success(self.request, _('Updated successfully'))
         return super().form_valid(form)
 
     def test_func(self):
@@ -104,6 +108,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView
         return post_instance.owner == self.request.user
 
     def get_success_url(self):
+        messages.success(self.request, _('Deleted successfully'))
         return reverse_lazy('post_list')+'?wall_id='+str(self.request.user.walls.first().id)
 
     def get_context_data(self, **kwargs):
