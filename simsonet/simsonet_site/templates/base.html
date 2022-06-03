@@ -21,6 +21,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">{% block navigation %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Pradžia</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'friend_list' %}">Friends</a></li>
                 {% endblock navigation %}</ul>
                 <!-- Search -->
                 <form class="form-inline" action="{% url 'post_list' %}" method="get" class="mb-3">

@@ -9,13 +9,13 @@ class Friend(models.Model):
         settings.AUTH_USER_MODEL, 
         verbose_name=_("user"), 
         on_delete=models.CASCADE,
-        related_name='friends',
+        related_name='friend_requests',
     )
     friend = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         verbose_name=_("friend"), 
         on_delete=models.CASCADE,
-        related_name='friend_requests',
+        related_name='friends',
     )
     is_accepted = models.BooleanField(_("accepted"), default=False)
     is_blocked = models.BooleanField(_("blocked"), default=False)

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% block content %}
+<div class="container">
+    <h1 class="ssn-friends-heading">{% trans "friends"|capfirst %}</h1>
+    {% if friend_list.count > 0 %}
+        {% include 'simsonet_friends/includes/paginator.html' %}
+        <ul class="list-group">
+            {% for friendship in friend_list.all  %}
+                <li class="list-group-item">
+                    <span class="float-right badge badge-light">{% trans "since" %} {{ friendship.updated_at }}</span>
+                    {% with friendship.friend as user_badge %}
+                        {% include 'simsonet_posts/includes/user_widget.html' %}
+                    {% endwith %}
+                    {% if friendship.is_blocked %}
+                        <span class="float-right badge badge-danger">{% trans "blocked" %}</span>
+                    {% endif %}
+                    {% if friendship.is_accepted %}
+                        <span class="float-right badge badge-success">{% trans "accepted" %}</span>
+                    {% else %}
+                        <span class="float-right badge badge-warning">{% trans "requested" %}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        {% include 'simsonet_friends/includes/paginator.html' %}
+    {% else %}
+        <div class="alert alert-warning">{% trans "no friends found, but never too late to befriend someone"|capfirst %}!</div>
+    {% endif %}
+</div>
+{% endblock content %}
