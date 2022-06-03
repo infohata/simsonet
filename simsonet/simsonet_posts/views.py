@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model, get_user
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -16,7 +17,7 @@ class WallDetailView(generic.DetailView):
 
 class PostListView(generic.ListView):
     model = Post
-    paginate_by = 20
+    paginate_by = 10
     template_name = 'simsonet_posts/post_list.html'
 
     def get_queryset(self):
@@ -25,6 +26,13 @@ class PostListView(generic.ListView):
         if wall_id:
             queryset = queryset.filter(wall=wall_id)
         owner_id = self.request.GET.get('owner_id')
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(content__icontains=search) |
+                Q(owner__username__icontains=search) |
+                Q(owner__first_name__in=search.split(), owner__last_name__in=search.split())
+            )
         if owner_id:
             queryset = queryset.filter(owner=owner_id)
         elif not wall_id:

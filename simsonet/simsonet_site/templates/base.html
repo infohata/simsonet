@@ -22,6 +22,13 @@
                 <ul class="navbar-nav mr-auto">{% block navigation %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Pradžia</a></li>
                 {% endblock navigation %}</ul>
+                <!-- Search -->
+                <form class="form-inline" action="{% url 'post_list' %}" method="get" class="mb-3">
+                    <input type="text" name="search" value="{{ request.GET.search }}" placeholder="{% trans "search posts" %}" class="form-control bg-dark text-light">
+                    {% if request.GET.wall_id %}<input type="hidden" name="wall_id" value={{ request.GET.wall_id }}>{% endif %}
+                    {% if request.GET.owner_id %}<input type="hidden" name="owner_id" value={{ request.GET.owner_id }}>{% endif %}
+                    <button type="submit" class="btn btn-secondary ml-1">&#128269;</button>
+                </form>
                 <!-- User menu -->
                 <ul class="navbar-nav">
                     {% if request.user.is_authenticated %}
@@ -42,22 +49,20 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}?next={{ request.path }}">{% trans "login"|capfirst %}</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">{% trans "sign up"|capfirst %}</a></li>
                     {% endif %}
-                    </ul>
-                <!-- Language switcher -->
-                <ul class="navbar-nav ml-2">
-                    <form class="form-inline" action="{% url 'set_language' %}" method="post">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ redirect_to }}">
-                        <select class="form-control bg-dark text-light" name="language" onchange="this.form.submit()">
-                            {% get_available_languages as LANGUAGES %}
-                            {% for lang in LANGUAGES %}
-                                <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected="selected"{% endif %}>
-                                    {{ lang.1 }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </form>
                 </ul>
+                <!-- Language switcher -->
+                <form class="form-inline" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select class="form-control bg-dark text-light" name="language" onchange="this.form.submit()">
+                        {% get_available_languages as LANGUAGES %}
+                        {% for lang in LANGUAGES %}
+                            <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected="selected"{% endif %}>
+                                {{ lang.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
                 <!-- END Language switcher -->
             </div>
         </div>
