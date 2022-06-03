@@ -27,5 +27,6 @@ urlpatterns = [
     path('user_profile/', include('user_profile.urls')),
     path('', include('simsonet_site.urls')),
     path('posts/', include('simsonet_posts.urls')),
+    path('friends/', include('simsonet_friends.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
   + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

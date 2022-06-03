@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'simsonet_site',
     'simsonet_posts',
+    'simsonet_friends',
     'user_profile',
     
     'crispy_forms',
