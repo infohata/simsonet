@@ -13,10 +13,10 @@
                     {% endwith %}
                     <span class="float-right badge badge-light">{% trans "since" %} {{ friend_request.updated_at }}</span>
                     {% if friend_request.is_blocked %}
-                        <a class="mr-2 float-right btn btn-outline-danger">{% trans "unblock"|capfirst %}</a>
+                        <a href="{% url 'friend_block_unblock' friend_request.user.id  %}" class="mr-2 float-right btn btn-outline-danger">{% trans "unblock"|capfirst %}</a>
                     {% else %}
-                        <a class="mr-2 float-right btn btn-outline-danger">{% trans "block"|capfirst %}</a>
-                        <a class="mr-2 float-right btn btn-success">{% trans "accept"|capfirst %}</a>
+                        <a href="{% url 'friend_block_unblock' friend_request.user.id  %}" class="mr-2 float-right btn btn-outline-danger">{% trans "block"|capfirst %}</a>
+                        <a href="{% url 'friend_request_accept' friend_request.user.id  %}" class="mr-2 float-right btn btn-success">{% trans "accept"|capfirst %}</a>
                     {% endif %}
                 </li>
             {% endfor %}

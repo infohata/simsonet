@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from . import models, forms
 
@@ -38,6 +40,7 @@ class FriendRequestCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.C
     
     def form_valid(self, form):
         form.instance.user = self.request.user
+        messages.info(self.request, f'{_("friend request sent to")} {form.instance.friend.username}')
         return super().form_valid(form)
 
     def get_initial(self):
@@ -58,3 +61,25 @@ class FriendRequestCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.C
         if friendship_found:
             return False
         return not (self.request.user.id == int(friend_id))
+
+
+def friend_request_accept(request, sender_id):
+    friendship = get_object_or_404(models.Friend, user=sender_id, friend=request.user)
+    if not friendship.is_accepted:
+        friendship.is_accepted = True
+        friendship.save()
+        messages.success(request, f'{_("you are now friends with")} {friendship.user.username}')
+    else:
+        messages.warning(request, f'{_("you are already friends with")} {friendship.user.username}')
+    return redirect(reverse_lazy('friend_list'))
+
+
+def friend_block_unblock(request, sender_id):
+    friendship = get_object_or_404(models.Friend, user=sender_id, friend=request.user)
+    friendship.is_blocked = not friendship.is_blocked
+    friendship.save()
+    if friendship.is_blocked:
+        messages.error(request, f'{_("you have blocked")} {friendship.user.username}')
+    else:
+        messages.success(request, f'{_("you have unblocked")} {friendship.user.username}')
+    return redirect(reverse_lazy('friend_list'))
