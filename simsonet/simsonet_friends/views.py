@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
-from . import models
+from . import models, forms
 
 
 class FriendListView(LoginRequiredMixin, generic.ListView):
@@ -33,7 +33,8 @@ class FriendRequestCreateView(LoginRequiredMixin, UserPassesTestMixin, generic.C
     model = models.Friend
     template_name = 'simsonet_friends/friend_request.html'
     success_url = reverse_lazy('friend_list')
-    fields = ('friend', 'request_message')
+    form_class = forms.FriendRequestCreateForm
+    # fields = ('friend', 'request_message')
     
     def form_valid(self, form):
         form.instance.user = self.request.user

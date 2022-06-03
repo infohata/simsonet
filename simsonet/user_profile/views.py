@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from . forms import UserUpdateForm, UserProfileUpdateForm
+from simsonet_friends. models import Friend
 
 
 @login_required
@@ -14,7 +15,8 @@ def view_my_profile(request):
 
 def view_user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    return render(request, 'user_profile/view_profile.html', {'user_': user })
+    friendship = Friend.objects.filter(friend=user_id, user=request.user).first()
+    return render(request, 'user_profile/view_profile.html', {'user_': user, 'friendship': friendship })
 
 
 @login_required
