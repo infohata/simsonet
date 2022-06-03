@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static i18n crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <h1>{% trans "friend request to"|capfirst %}{{ friend }}</h1>
+    <form action="{% url 'friend_create' %}?friend_id={{ friend.id }}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="form-group"><button type="submit" class="btn btn-primary">{% trans "send request"|capfirst %}</button></div>
+    </form>
+</div>
+{% endblock content %}

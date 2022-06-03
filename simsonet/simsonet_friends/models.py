@@ -48,6 +48,7 @@ class Friend(models.Model):
             else:
                 if not counterparty.is_accepted:
                     counterparty.is_accepted = True
+                    counterparty.is_blocked = False
                     counterparty.save()
 
     def delete(self, *args, **kwargs):

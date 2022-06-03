@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, get_user
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.db.models import Q
@@ -25,7 +25,6 @@ class PostListView(generic.ListView):
         wall_id = self.request.GET.get('wall_id')
         if wall_id:
             queryset = queryset.filter(wall=wall_id)
-        owner_id = self.request.GET.get('owner_id')
         search = self.request.GET.get('search')
         if search:
             queryset = queryset.filter(
@@ -33,10 +32,11 @@ class PostListView(generic.ListView):
                 Q(owner__username__icontains=search) |
                 Q(owner__first_name__in=search.split(), owner__last_name__in=search.split())
             )
+        owner_id = self.request.GET.get('owner_id')
         if owner_id:
             queryset = queryset.filter(owner=owner_id)
         elif not wall_id:
-            queryset = queryset.filter(owner=get_user(self.request))
+            queryset = queryset.filter(owner=self.request.user)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -48,7 +48,7 @@ class PostListView(generic.ListView):
         if owner_id:
             context["owner"] = get_object_or_404(get_user_model(), id=owner_id)
         else:
-            context['owner'] = get_user(self.request)
+            context['owner'] = self.request.user
         return context
 
 

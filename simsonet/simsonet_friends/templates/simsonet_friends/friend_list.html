@@ -2,16 +2,39 @@
 {% load static i18n %}
 {% block content %}
 <div class="container">
-    <h1 class="ssn-friends-heading">{% trans "friends"|capfirst %}</h1>
+    {% if friend_requests %}
+        <h1 class="ssn-friend-requests-heading">{% trans "pending friend requests"|capfirst %}</h1>
+        <ul class="list-group">
+            {% for friend_request in friend_requests  %}
+                <li class="list-group-item">
+                    {% with friend_request.user as user_badge %}
+                        {% include 'simsonet_posts/includes/user_widget.html' %}
+                        <div class="d-inline-block">{{ friend_request.request_message|safe }}</div>
+                    {% endwith %}
+                    <span class="float-right badge badge-light">{% trans "since" %} {{ friend_request.updated_at }}</span>
+                    {% if friend_request.is_blocked %}
+                        <a class="mr-2 float-right btn btn-outline-danger">{% trans "unblock"|capfirst %}</a>
+                    {% else %}
+                        <a class="mr-2 float-right btn btn-outline-danger">{% trans "block"|capfirst %}</a>
+                        <a class="mr-2 float-right btn btn-success">{% trans "accept"|capfirst %}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <h1 class="ssn-friends-heading">
+        {% if user_ %}{{ user_ }}{% endif %}
+        {% trans "friends"|capfirst %}
+    </h1>
     {% if friend_list.count > 0 %}
         {% include 'simsonet_friends/includes/paginator.html' %}
         <ul class="list-group">
             {% for friendship in friend_list.all  %}
                 <li class="list-group-item">
-                    <span class="float-right badge badge-light">{% trans "since" %} {{ friendship.updated_at }}</span>
                     {% with friendship.friend as user_badge %}
                         {% include 'simsonet_posts/includes/user_widget.html' %}
                     {% endwith %}
+                    <span class="float-right badge badge-light">{% trans "since" %} {{ friendship.updated_at }}</span>
                     {% if friendship.is_blocked %}
                         <span class="float-right badge badge-danger">{% trans "blocked" %}</span>
                     {% endif %}
