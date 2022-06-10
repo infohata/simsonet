@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from rest_framework import generics
+from rest_framework import generics, permissions
 from . forms import PostForm
 from . models import Post, Wall
 from . serializers import PostSerializer
@@ -127,6 +127,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView
         return context
 
 
-class PostListAPI(generics.ListCreateAPIView):
+class PostListCreateAPI(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        if self.request.data.get('reply_to'):
+            serializer.save(owner=self.request.user, wall=None)
+        serializer.save(owner=self.request.user)
