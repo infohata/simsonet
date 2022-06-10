@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'simsonet_friends',
     'user_profile',
     
+    'rest_framework',
     'crispy_forms',
     'tinymce',
     'debug_toolbar',

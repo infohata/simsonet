@@ -6,8 +6,10 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
+from rest_framework import generics
 from . forms import PostForm
 from . models import Post, Wall
+from . serializers import PostSerializer
 
 
 class WallDetailView(generic.DetailView):
@@ -123,3 +125,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView
         context = super().get_context_data(**kwargs)
         context['delete'] = True
         return context
+
+
+class PostListAPI(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
