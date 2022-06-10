@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, exceptions
 from . forms import PostForm
 from . models import Post, Wall
 from . serializers import PostSerializer
@@ -136,3 +136,36 @@ class PostListCreateAPI(generics.ListCreateAPIView):
         if self.request.data.get('reply_to'):
             serializer.save(owner=self.request.user, wall=None)
         serializer.save(owner=self.request.user)
+
+
+class PostDetailUpdateDeleteAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, request, *args, **kwargs):
+        post = Post.objects.filter(pk=kwargs['pk'], owner=self.request.user)
+        if post.exists():
+            return self.update(request, *args, **kwargs)
+        else:
+            raise exceptions.ValidationError(_('you cannot edit posts of other users'.capitalize()))
+
+    def delete(self, request, *args, **kwargs):
+        post = Post.objects.filter(pk=kwargs['pk'], owner=self.request.user)
+        if post.exists():
+            return self.destroy(request, *args, **kwargs)
+        else:
+            raise exceptions.ValidationError(_('you cannot delete posts of other users'.capitalize()))
+
+
+class PostReplyListCreateAPI(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return super().get_queryset().filter(reply_to=self.kwargs['pk'])
+
+    def perform_create(self, serializer):
+        post = Post.objects.get(id=self.kwargs['pk'])
+        serializer.save(owner=self.request.user, wall=None, reply_to=post)
