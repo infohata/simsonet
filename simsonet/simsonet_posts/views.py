@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from rest_framework import generics, permissions, exceptions, mixins, status
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from . forms import PostForm
 from . models import Post, Wall, Like
 from . serializers import PostSerializer, LikeSerializer
@@ -44,6 +45,8 @@ class PostListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated and not hasattr(self.request.user, 'auth_token'):
+            Token(user=self.request.user).save()
         wall_id = self.request.GET.get('wall_id')
         if wall_id:
             context["wall"] = get_object_or_404(Wall, id=wall_id)
@@ -58,6 +61,12 @@ class PostListView(generic.ListView):
 class PostDetailView(generic.DetailView):
     model = Post
     template_name = 'simsonet_posts/post_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated and not hasattr(self.request.user, 'auth_token'):
+            Token(user=self.request.user).save()
+        return context
 
 
 class PostCreateView(LoginRequiredMixin, generic.CreateView):

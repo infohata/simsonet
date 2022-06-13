@@ -19,7 +19,7 @@
     <a class="badge badge-primary ml-2 p-2" href="{% url 'post_detail' post.id %}">{% trans "reposts" %}: {{ post.reposts.count }}</a>
 {% endif %}
 {{ post.content|safe }}
-<button id="like_btn_{{ post.id }}" class="btn btn-outline-primary">{% trans "likes"|capfirst %}: {{ post.likes.count }}</button>
+<button onclick="likePressed(this, '{{ post.id }}')" class="btn btn-outline-primary">{% trans "likes"|capfirst %}: <span id="like_counter_{{ post.id }}">{{ post.likes.count }}</span></button>
 {% if not reply_to and not repost_of and not delete %}
     <a class="btn btn-primary" href="{% url 'post_create' %}?reply_to={{ post.id }}">{% trans "reply"|capfirst %}</a>
     {% if post.owner == user %}
