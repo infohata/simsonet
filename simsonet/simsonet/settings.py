@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'user_profile',
     
     'rest_framework',
+    'rest_framework.authtoken',
     'crispy_forms',
     'tinymce',
     'debug_toolbar',
@@ -181,4 +182,10 @@ TINYMCE_DEFAULT_CONFIG = {
     'statusbar': True,
     'menubar': False,
     'toolbar2': '',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
