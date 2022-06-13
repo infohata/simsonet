@@ -72,3 +72,27 @@ class Post(models.Model):
         verbose_name = _('post')
         verbose_name_plural = _('posts')
         ordering = ('pin_to_top', 'created_at', )
+
+
+class Like(models.Model):
+    post = models.ForeignKey(
+        Post, 
+        verbose_name=_("post"), 
+        on_delete=models.CASCADE, 
+        related_name='likes'
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        verbose_name=_("owner"), 
+        on_delete=models.CASCADE, 
+        related_name='likes'
+    )
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return f'{str(self.post)} {str(self.owner)} {str(self.created_at)}'
+    
+    class Meta:
+        verbose_name = 'like'
+        verbose_name_plural = 'likes'
+        unique_together = ('post', 'owner', )

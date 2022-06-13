@@ -6,10 +6,11 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from rest_framework import generics, permissions, exceptions
+from rest_framework import generics, permissions, exceptions, mixins, status
+from rest_framework.response import Response
 from . forms import PostForm
-from . models import Post, Wall
-from . serializers import PostSerializer
+from . models import Post, Wall, Like
+from . serializers import PostSerializer, LikeSerializer
 
 
 class WallDetailView(generic.DetailView):
@@ -169,3 +170,27 @@ class PostReplyListCreateAPI(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         post = Post.objects.get(id=self.kwargs['pk'])
         serializer.save(owner=self.request.user, wall=None, reply_to=post)
+
+
+class LikeCreateAPIView(generics.CreateAPIView, mixins.DestroyModelMixin):
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        return Like.objects.filter(owner=self.request.user, post=post)
+
+    def perform_create(self, serializer):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        if self.get_queryset().exists():
+            raise exceptions.ValidationError(_('you already liked this post').capitalize())
+        else:
+            serializer.save(owner=self.request.user, post=post)
+
+    def delete(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise exceptions.ValidationError(_('you did not leave a like to this post yet').capitalize())

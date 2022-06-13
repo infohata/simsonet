@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/list/', views.PostListCreateAPI.as_view()),
     path('api/<int:pk>/', views.PostDetailUpdateDeleteAPI.as_view()),
     path('api/<int:pk>/replies/', views.PostReplyListCreateAPI.as_view()),
+    path('api/<int:pk>/like/', views.LikeCreateAPIView.as_view()),
 ]
