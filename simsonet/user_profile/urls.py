@@ -7,4 +7,7 @@ urlpatterns = [
     path('view_profile/', views.view_my_profile, name='view_profile'),
     path('view_profile/<int:user_id>/', views.view_user_profile, name='view_user_profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('api/edit_profile/', views.UpdateProfileAPI.as_view()),
+    path('api/user/create/', views.CreateUserAPI.as_view()),
+    
 ]

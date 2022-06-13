@@ -1,11 +1,13 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib import messages
+from rest_framework import generics, permissions, exceptions
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from . forms import UserUpdateForm, UserProfileUpdateForm
-from simsonet_friends. models import Friend
+from . import serializers, models
+from simsonet_friends.models import Friend
 
 
 @login_required
@@ -14,7 +16,7 @@ def view_my_profile(request):
 
 
 def view_user_profile(request, user_id):
-    user = get_object_or_404(User, id=user_id)
+    user = get_object_or_404(get_user_model(), id=user_id)
     friendship = Friend.objects.filter(friend=user_id, user=request.user).first()
     return render(request, 'user_profile/view_profile.html', {'user_': user, 'friendship': friendship })
 
@@ -52,16 +54,42 @@ def register(request):
         if not password or password != password2:
             messages.error(request, _('Passwords do not match or not entered.'))
             error = True
-        if not username or User.objects.filter(username=username).exists():
+        if not username or get_user_model().objects.filter(username=username).exists():
             messages.error(request, _('User with username {} already exists.').format(username))
             error = True
-        if not email or User.objects.filter(email=email).exists():
+        if not email or get_user_model().objects.filter(email=email).exists():
             messages.error(request, _('User with e-mail address {} already exists.').format(email))
             error = True
         if error:
             return redirect('register')
         else:
-            User.objects.create_user(username=username, email=email, password=password)
+            get_user_model().objects.create_user(username=username, email=email, password=password)
             messages.success(request, _('User {} has been registered successfully. You can login now.').format(username))
             return redirect('index')
     return render(request, 'user_profile/register.html')
+
+
+class UpdateProfileAPI(generics.RetrieveUpdateAPIView):
+    serializer_class = serializers.ProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_object(self):
+        if self.request.user.is_authenticated:
+            return models.UserProfile.objects.filter(user=self.request.user).first()
+        else:
+            raise exceptions.ValidationError(_('you must be logged in to update your profile').capitalize())
+
+    def put(self, request, *args, **kwargs):
+        profile = models.UserProfile.objects.filter(pk=self.request.user.user_profile.id)
+        if profile.exists():
+            return self.update(request, *args, **kwargs)
+        else:
+            raise exceptions.ValidationError(_('you cannot edit profiles of other users').capitalize())
+
+
+class CreateUserAPI(generics.CreateAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [permissions.AllowAny]
+
